@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { sortTemplateComponents } from '../helpers/TemplateMessageHelper';
 import { Button } from '@mui/material';
 import { getObjLength } from '../helpers/ObjectHelper';
@@ -25,7 +25,7 @@ const TemplatesList: React.FC<Props> = ({
 	const { isTemplatesFailed } = useAppSelector((state) => state.UI);
 	const templates = useAppSelector((state) => state.templates.value);
 
-	const { issueTemplateRefreshRequest } = useTemplates();
+	const { issueTemplateRefreshRequest, listTemplates } = useTemplates();
 
 	const isRefreshingTemplates = useAppSelector(
 		(state) => state.isRefreshingTemplates.value
@@ -34,6 +34,12 @@ const TemplatesList: React.FC<Props> = ({
 	const doRefreshTemplates = async () => {
 		await issueTemplateRefreshRequest();
 	};
+
+	useEffect(() => {
+		if (getObjLength(templates) === 0 && !isTemplatesFailed) {
+			listTemplates(false);
+		}
+	}, []);
 
 	return (
 		<div className="templateMessagesWrapper">
